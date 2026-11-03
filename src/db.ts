@@ -22,3 +22,11 @@ export async function saveSighting(sighting: Sighting, newCat?: Cat) {
 export async function updateCat(id: string, profile: CatProfile) {
   await db.cats.update(id, profile);
 }
+
+/** iPhoneのSafariでは更新直後に写真が表示されないことがあるので、写真を新しいBlobにして書き戻す */
+export async function updateSightingMemo(id: string, memo: string) {
+  const sighting = await db.sightings.get(id);
+  if (!sighting || sighting.memo === memo) return;
+  const photo = new Blob([await sighting.photo.arrayBuffer()], { type: sighting.photo.type });
+  await db.sightings.update(id, { memo, photo });
+}

@@ -321,6 +321,7 @@ textarea {
 }
 
 .sighting-photo {
+  display: block;
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: var(--radius);

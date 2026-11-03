@@ -10,7 +10,9 @@ function SightingPhoto({ sighting }: { sighting: Sighting }) {
 
   return (
     <figure className="sighting">
-      <div className="sighting-photo">{photoUrl && <img src={photoUrl} alt="" />}</div>
+      <Link to={`/sightings/${sighting.id}/edit`} className="sighting-photo" aria-label="この記録を編集">
+        {photoUrl && <img src={photoUrl} alt="" />}
+      </Link>
       <figcaption>
         <time dateTime={new Date(sighting.takenAt).toISOString()}>{formatDate(sighting.takenAt)}</time>
         {sighting.memo && <p>{sighting.memo}</p>}

@@ -5,6 +5,7 @@ import CatDetailPage from './pages/CatDetailPage';
 import CatEditPage from './pages/CatEditPage';
 import GalleryPage from './pages/GalleryPage';
 import MapPage from './pages/MapPage';
+import SightingEditPage from './pages/SightingEditPage';
 
 function TabLayout() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
       </Route>
       <Route path="add" element={<AddPage />} />
       <Route path="cats/:id/edit" element={<CatEditPage />} />
+      <Route path="sightings/:id/edit" element={<SightingEditPage />} />
       <Route path="*" element={<Navigate to="/map" replace />} />
     </Routes>
   );
