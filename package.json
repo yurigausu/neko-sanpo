@@ -4,11 +4,12 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite --host --port 5173 --strictPort",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host"
   },
   "dependencies": {
+    "@geolonia/maps-core": "^0.8.0",
     "dexie": "^4.4.7",
     "dexie-react-hooks": "^4.4.0",
     "exifr": "^7.1.3",
