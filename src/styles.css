@@ -134,6 +134,11 @@ textarea {
   color: var(--accent-strong);
 }
 
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+}
+
 .empty {
   display: flex;
   flex-direction: column;

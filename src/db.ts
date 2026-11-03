@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
-import type { Cat, Sighting } from './types';
+import type { Cat, CatProfile, Sighting } from './types';
 
 export const db = new Dexie('neko-sanpo') as Dexie & {
   cats: EntityTable<Cat, 'id'>;
@@ -17,4 +17,8 @@ export async function saveSighting(sighting: Sighting, newCat?: Cat) {
     if (newCat) await db.cats.add(newCat);
     await db.sightings.add(sighting);
   });
+}
+
+export async function updateCat(id: string, profile: CatProfile) {
+  await db.cats.update(id, profile);
 }

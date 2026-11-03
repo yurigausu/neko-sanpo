@@ -1,13 +1,14 @@
 import { useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
+import CatFields from '../components/CatFields';
 import LocationPicker from '../components/LocationPicker';
 import { db, saveSighting } from '../db';
 import { formatDate } from '../lib/format';
 import { readPhotoMeta, resizePhoto } from '../lib/photo';
 import { useObjectUrl } from '../lib/useObjectUrl';
 import { createId } from '../lib/id';
-import type { Cat, LatLng, SakuraMimi } from '../types';
+import type { Cat, CatProfile, LatLng } from '../types';
 
 type Step = 'photo' | 'location' | 'cat';
 
@@ -20,21 +21,13 @@ interface PickedPhoto {
 
 const NEW_CAT = 'new';
 
-const SAKURA_OPTIONS: { value: SakuraMimi; label: string }[] = [
-  { value: 'unknown', label: 'わからない' },
-  { value: 'yes', label: 'あり' },
-  { value: 'no', label: 'なし' },
-];
-
 export default function AddPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('photo');
   const [photo, setPhoto] = useState<PickedPhoto | null>(null);
   const [location, setLocation] = useState<LatLng | null>(null);
   const [selectedCatId, setSelectedCatId] = useState<string | null>(null);
-  const [catName, setCatName] = useState('');
-  const [catMemo, setCatMemo] = useState('');
-  const [sakuraMimi, setSakuraMimi] = useState<SakuraMimi>('unknown');
+  const [profile, setProfile] = useState<CatProfile>({ name: '', memo: '', sakuraMimi: 'unknown' });
   const [sightingMemo, setSightingMemo] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -45,7 +38,7 @@ export default function AddPage() {
 
   // 未選択なら、猫がいれば選ばせ、いなければ新規登録にする
   const catChoice = selectedCatId ?? (cats?.length === 0 ? NEW_CAT : null);
-  const canSave = !busy && (catChoice === NEW_CAT ? catName.trim() !== '' : catChoice !== null);
+  const canSave = !busy && (catChoice === NEW_CAT ? profile.name.trim() !== '' : catChoice !== null);
 
   const handleFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -77,7 +70,7 @@ export default function AddPage() {
     const now = Date.now();
     const newCat: Cat | undefined =
       catChoice === NEW_CAT
-        ? { id: createId(), name: catName.trim(), memo: catMemo.trim(), sakuraMimi, createdAt: now }
+        ? { ...profile, id: createId(), name: profile.name.trim(), memo: profile.memo.trim(), createdAt: now }
         : undefined;
     const catId = newCat?.id ?? catChoice;
 
@@ -195,35 +188,7 @@ export default function AddPage() {
               </label>
             </div>
 
-            {catChoice === NEW_CAT && (
-              <div className="new-cat-form">
-                <label className="field">
-                  名前
-                  <input type="text" value={catName} onChange={(e) => setCatName(e.target.value)} />
-                </label>
-                <label className="field">
-                  猫のメモ
-                  <textarea rows={2} value={catMemo} onChange={(e) => setCatMemo(e.target.value)} />
-                </label>
-                <fieldset className="field">
-                  <legend>さくら耳</legend>
-                  <div className="segmented">
-                    {SAKURA_OPTIONS.map((option) => (
-                      <label key={option.value} className={sakuraMimi === option.value ? 'selected' : ''}>
-                        <input
-                          type="radio"
-                          name="sakura"
-                          className="visually-hidden"
-                          checked={sakuraMimi === option.value}
-                          onChange={() => setSakuraMimi(option.value)}
-                        />
-                        {option.label}
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
-              </div>
-            )}
+            {catChoice === NEW_CAT && <CatFields value={profile} onChange={setProfile} />}
 
             <label className="field">
               今回のメモ（任意）

@@ -40,7 +40,10 @@ export default function CatDetailPage() {
 
   return (
     <div className="page">
-      <Link to="/gallery" className="back-link">‹ ギャラリー</Link>
+      <nav className="page-nav">
+        <Link to="/gallery" className="back-link">‹ ギャラリー</Link>
+        <Link to={`/cats/${cat.id}/edit`} className="back-link">編集</Link>
+      </nav>
       <h1 className="page-title">{cat.name}</h1>
       <p className="cat-meta">
         <span className="sakura-label">{SAKURA_MIMI_LABELS[cat.sakuraMimi]}</span>
