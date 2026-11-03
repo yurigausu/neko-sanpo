@@ -438,6 +438,11 @@ textarea {
   color: #8a4a1c;
 }
 
+.button.danger {
+  background: none;
+  color: var(--danger);
+}
+
 .button:disabled,
 .button.disabled {
   opacity: 0.45;

@@ -30,3 +30,12 @@ export async function updateSightingMemo(id: string, memo: string) {
   const photo = new Blob([await sighting.photo.arrayBuffer()], { type: sighting.photo.type });
   await db.sightings.update(id, { memo, photo });
 }
+
+/** 記録を削除する。最後の1件なら猫も一緒に消す */
+export async function deleteSighting(sighting: Sighting) {
+  await db.transaction('rw', db.cats, db.sightings, async () => {
+    await db.sightings.delete(sighting.id);
+    const remaining = await db.sightings.where('catId').equals(sighting.catId).count();
+    if (remaining === 0) await db.cats.delete(sighting.catId);
+  });
+}
