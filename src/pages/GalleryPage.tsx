@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { CatIcon } from '../components/icons';
+import SampleButton from '../components/SampleButton';
 import { SAKURA_MIMI_LABELS } from '../lib/format';
 import { getCatSummaries, type CatSummary } from '../lib/queries';
 import { useObjectUrl } from '../lib/useObjectUrl';
@@ -36,6 +37,7 @@ export default function GalleryPage() {
       <div className="cat-grid">
         {summaries?.map((summary) => <CatCard key={summary.cat.id} summary={summary} />)}
       </div>
+      <SampleButton />
     </div>
   );
 }

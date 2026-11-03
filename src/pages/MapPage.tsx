@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { GeolocateControl, LngLatBounds, Marker, Popup, type Map as MapLibreMap } from 'maplibre-gl';
+import SampleButton from '../components/SampleButton';
 import { db } from '../db';
 import { formatDate } from '../lib/format';
 import { createCatPinElement, createMap } from '../lib/map';
@@ -25,6 +26,12 @@ function createPopupContent(cat: Cat | undefined, sighting: Sighting, onOpenCat:
 
   root.append(img, name, date);
   return root;
+}
+
+function fitToSightings(map: MapLibreMap, sightings: Sighting[]) {
+  const bounds = new LngLatBounds();
+  sightings.forEach((s) => bounds.extend([s.lng, s.lat]));
+  map.fitBounds(bounds, { padding: 70, maxZoom: 16, duration: 0 });
 }
 
 export default function MapPage() {
@@ -73,9 +80,7 @@ export default function MapPage() {
 
     if (!hasFitted.current && data.sightings.length > 0) {
       hasFitted.current = true;
-      const bounds = new LngLatBounds();
-      data.sightings.forEach((s) => bounds.extend([s.lng, s.lat]));
-      map.fitBounds(bounds, { padding: 70, maxZoom: 16, duration: 0 });
+      fitToSightings(map, data.sightings);
     }
 
     return () => markers.forEach((marker) => marker.remove());
@@ -84,9 +89,18 @@ export default function MapPage() {
   return (
     <div className="map-page">
       <div ref={containerRef} className="map-page-map" data-testid="main-map" />
-      {data?.sightings.length === 0 && (
-        <p className="map-hint">＋ボタンから、出会った猫を記録しましょう</p>
-      )}
+      <div className="map-overlay">
+        {data?.sightings.length === 0 && (
+          <p className="map-hint">＋ボタンから、出会った猫を記録しましょう</p>
+        )}
+        <SampleButton
+          onLoaded={(sightings) => {
+            // 実データが別の場所にあっても、サンプルが見えるようにする
+            hasFitted.current = true;
+            if (mapRef.current) fitToSightings(mapRef.current, sightings);
+          }}
+        />
+      </div>
     </div>
   );
 }
